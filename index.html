@@ -1,1481 +1,1601 @@
 <html><head><base href="." />
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
-    
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #1a1a2e, #16213e);
-        font-family: 'Press Start 2P', cursive;
-      }
-    
-      .container {
-        text-align: center;
-        color: white;
-        padding: 2rem;
-        width: 90%;
-        max-width: 1200px;
-      }
-    
-      h1 {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        animation: glow 2s ease-in-out infinite alternate;
-      }
-    
-      h2 {
-        font-size: 1.5rem;
-        color: #FFD700;
-        margin-bottom: 1.5rem;
-      }
-    
-      p {
-        font-size: 1rem;
-        margin-bottom: 2rem;
-        color: #8ef6e4;
-      }
-    
-      .button {
-        padding: 1rem 2rem;
-        font-size: 1.2rem;
-        background: #FFD700;
-        border: 3px solid #FFD700;
-        color: #1a1a2e;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        margin: 10px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-    
-      .button:hover {
-        background: #FFD700;
-        color: #1a1a2e;
-        transform: scale(1.1);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      }
-    
-      .button-container {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 2rem;
-      }
-    
-      .button.generate-new {
-        background: #4CAF50;
-        border-color: #4CAF50;
-      }
-    
-      .button.generate-new:hover {
-        background: #45a049;
-        border-color: #45a049;
-        box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
-      }
-    
-      .settings-card {
-        background: rgba(255, 235, 156, 0.2);
-        border: 3px solid #FFD700;
-        border-radius: 10px;
-        padding: 2rem;
-        margin: 1rem;
-        flex: 1;
-        min-width: 250px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        color: white;
-      }
-    
-      .settings-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        background: rgba(255, 235, 156, 0.3);
-      }
-    
-      .settings-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 2rem;
-        margin-top: 2rem;
-      }
-    
-      .start-game-button {
-        margin-top: 2rem;
-        padding: 1.2rem 2.5rem;
-        font-size: 1.2rem;
-        background: #FFD700;
-        border: 3px solid #FFD700;
-        color: #1a1a2e;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-    
-      .start-game-button:hover {
-        background: #FFD700;
-        color: #1a1a2e;
-        transform: scale(1.1);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      }
-    
-      .start-game-button:disabled {
-        background: #666;
-        border-color: #666;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-      }
-    
-      .players-modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(26, 26, 46, 0.95);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        z-index: 1000;
-        width: 80%;
-        max-width: 600px;
-        backdrop-filter: blur(10px);
-      }
-    
-      .players-modal.active {
-        display: block;
-      }
-    
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 999;
-      }
-    
-      .modal-overlay.active {
-        display: block;
-      }
-    
-      .players-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-top: 2rem;
-      }
-    
-      .player-button {
-        background: rgba(255, 235, 156, 0.2);
-        border: 2px solid #FFD700;
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        font-size: 0.8rem;
-      }
-    
-      .player-button:hover {
-        background: rgba(255, 235, 156, 0.3);
-        transform: scale(1.05);
-      }
-    
-      .close-modal {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: none;
-        border: none;
-        color: #FFD700;
-        cursor: pointer;
-        font-size: 1.5rem;
-      }
-    
-      @keyframes glow {
-        from {
-          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        to {
-          text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
-                       0 0 30px rgba(255, 255, 255, 0.6);
-        }
-      }
-    
-      @keyframes spin {
-        0% { transform: rotate3d(1, 1, 1, 0deg); }
-        50% { transform: rotate3d(1, 1, 1, 180deg); }
-        100% { transform: rotate3d(1, 1, 1, 360deg); }
-      }
-    
-      .dice-modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(26, 26, 46, 0.95);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        z-index: 1000;
-        width: 300px;
-        text-align: center;
-        backdrop-filter: blur(10px);
-      }
-    
-      .dice-modal.active {
-        display: block;
-      }
-    
-      .dice-container {
-        width: 100px;
-        height: 100px;
-        position: relative;
-        perspective: 1000px;
-        margin: 0 auto 2rem;
-      }
-    
-      .dice {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 2s ease-out;
-      }
-    
-      .dice.spinning {
-        animation: spin 2s ease-in-out infinite;
-      }
-    
-      .dice-face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: #FFD700;
-        border: 2px solid #1a1a2e;
-        border-radius: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        color: #1a1a2e;
-        box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
-      }
-    
-      .random-number {
-        font-size: 2rem;
-        color: #FFD700;
-        margin-top: 1rem;
-      }
-    
-      .screen {
-        display: none;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-      }
-    
-      .screen.active {
-        display: block;
-        opacity: 1;
-      }
-    
-      .icon {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-      }
-    
-      .card-title {
-        font-size: 1rem;
-        margin-top: 1rem;
-      }
-    
-      .selected-players {
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        color: #FFD700;
-        display: none;
-      }
-    
-      .selected-players.active {
-        display: block;
-      }
-    
-      .selected-players-list {
-        margin-top: 1rem;
-        color: #FFD700;
-        font-size: 0.8rem;
-        text-align: left;
-      }
-    
-      .player-entry {
-        margin: 0.5rem 0;
-        padding: 0.5rem;
-        background: rgba(255, 235, 156, 0.2);
-        border-radius: 5px;
-      }
-    
-      .situations-modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(26, 26, 46, 0.95);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        z-index: 1000;
-        width: 90%;
-        max-width: 800px;
-        backdrop-filter: blur(10px);
-      }
-    
-      .situations-modal.active {
-        display: block;
-      }
-    
-      .situations-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-top: 2rem;
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-    
-      .situation-button {
-        background: rgba(255, 235, 156, 0.2);
-        border: 2px solid #FFD700;
-        color: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        font-size: 0.8rem;
-        text-align: left;
-      }
-    
-      .situation-button:hover {
-        background: rgba(255, 235, 156, 0.3);
-        transform: scale(1.02);
-      }
-    
-      .selected-situation {
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        color: #FFD700;
-        display: none;
-      }
-    
-      .selected-situation.active {
-        display: block;
-      }
-    
-      .warning-modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255, 0, 0, 0.9);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        z-index: 1001;
-        width: 300px;
-        text-align: center;
-        color: white;
-        backdrop-filter: blur(10px);
-      }
-    
-      .warning-modal.active {
-        display: block;
-        animation: fadeInOut 5s forwards;
-      }
-    
-      @keyframes fadeInOut {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-      }
-    
-      #selected-dice-players {
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        color: #FFD700;
-        display: none;
-      }
-    
-      #selected-dice-players.active {
-        display: block;
-      }
-    
-      .selected-player-entry {
-        margin: 0.3rem 0;
-        padding: 0.3rem;
-        background: rgba(255, 235, 156, 0.2);
-        border-radius: 5px;
-      }
-    
-      .game-container {
-        background: rgba(255, 235, 156, 0.1);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        margin-top: 2rem;
-      }
-    
-      .situation-display {
-        margin-bottom: 2rem;
-        text-align: left;
-      }
-    
-      .roles-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-    
-      .role-card {
-        background: rgba(255, 235, 156, 0.2);
-        border: 2px solid #FFD700;
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: left;
-        animation: scaleIn 0.5s ease forwards;
-        opacity: 0;
-      }
-    
-      @keyframes slideIn {
-        from {
-          transform: translateY(-100px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-    
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-    
-      @keyframes scaleIn {
-        from {
-          transform: scale(0.8);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-    
-      .game-screen.active h1 {
-        animation: slideIn 0.8s ease forwards;
-      }
-    
-      .game-container {
-        animation: fadeIn 1s ease 0.3s forwards;
-        opacity: 0;
-      }
-    
-      .situation-display {
-        animation: slideIn 1s ease 0.6s forwards;
-        opacity: 0;
-      }
-    
-      .roles-container {
-        animation: fadeIn 1s ease 0.9s forwards;
-        opacity: 0;
-      }
-    
-      #context-description {
-        color: #8ef6e4;
-        line-height: 1.6;
-        font-size: 0.9rem;
-      }
-    
-      .return-button {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-        background: rgba(255, 215, 0, 0.2);
-        border: 2px solid #FFD700;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-      }
-    
-      .return-button:hover {
-        background: rgba(255, 215, 0, 0.4);
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-      }
-    
-      .mode-title {
-        color: #FFD700;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        animation: fadeIn 0.5s ease;
-      }
-    
-      .change-mode-button {
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid #FFD700;
-        color: #FFD700;
-        padding: 0.8rem 1.5rem;
-        font-size: 0.8rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Press Start 2P', cursive;
-        margin-top: 0.5rem;
-      }
-    
-      .change-mode-button:hover {
-        background: rgba(255, 215, 0, 0.2);
-        transform: scale(1.05);
-      }
-    
-      .game-controls {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-top: 2rem;
-        gap: 1rem;
-      }
-    
-      #context-mode-screen {
-        text-align: center;
-      }
-    
-      #context-mode-screen h1 {
-        animation: slideIn 0.8s ease forwards;
-      }
-    
-      #context-mode-screen p {
-        animation: fadeIn 1s ease 0.3s forwards;
-        opacity: 0;
-      }
-    
-      #context-mode-screen .button {
-        animation: fadeIn 1s ease 0.6s forwards;
-        opacity: 0;
-      }
-    
-      .context-game-screen {
-        text-align: left;
-        padding: 2rem;
-      }
-    
-      .dialogue-box {
-        background: rgba(255, 235, 156, 0.1);
-        border: 3px solid #FFD700;
-        border-radius: 15px;
-        padding: 2rem;
-        margin: 2rem 0;
-        animation: fadeIn 1s ease;
-      }
-    
-      .dialogue-line {
-        margin: 1rem 0;
-        font-size: 0.9rem;
-        color: #8ef6e4;
-      }
-    
-      .answer-section {
-        display: none;
-        animation: fadeIn 1s ease;
-      }
-    
-      .answer-section.active {
-        display: block;
-      }
-    
-      .context-title {
-        color: #FFD700;
-        margin-bottom: 1rem;
-        animation: slideIn 0.8s ease;
-      }
-    
-      .roles-section {
-        margin-top: 2rem;
-      }
-    
-      .role-entry {
-        margin: 0.5rem 0;
-        color: #8ef6e4;
-      }
-    
-      .solve-button {
-        background: #4CAF50;
-        border: none;
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 5px;
-        font-family: 'Press Start 2P', cursive;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 2rem;
-      }
-    
-      .solve-button:hover {
-        background: #45a049;
-        transform: scale(1.05);
-      }
-    
-      .hint-button {
-        background: #4169E1;
-        border: none;
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 5px;
-        font-family: 'Press Start 2P', cursive;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-right: 1rem;
-      }
-    
-      .hint-button:hover {
-        background: #1E90FF;
-        transform: scale(1.05);
-      }
-    
-      .hint-section {
-        display: none;
-        margin: 1rem 0;
-        padding: 1rem;
-        background: rgba(65, 105, 225, 0.2);
-        border-radius: 5px;
-        color: #4169E1;
-      }
-    
-      .hint-section.active {
-        display: block;
-        animation: fadeIn 0.5s ease;
-      }
-    
-    </style>
-    </head>
-    <body>
-      <div class="pixelated-border"></div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    font-family: 'Press Start 2P', cursive;
+  }
+
+  .container {
+    text-align: center;
+    color: white;
+    padding: 2rem;
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #FFD700;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #8ef6e4;
+  }
+
+  .button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: #FFD700;
+    border: 3px solid #FFD700;
+    color: #1a1a2e;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    margin: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .button:hover {
+    background: #FFD700;
+    color: #1a1a2e;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .button.generate-new {
+    background: #4CAF50;
+    border-color: #4CAF50;
+  }
+
+  .button.generate-new:hover {
+    background: #45a049;
+    border-color: #45a049;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+  }
+
+  .settings-card {
+    background: rgba(255, 235, 156, 0.2);
+    border: 3px solid #FFD700;
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 1rem;
+    flex: 1;
+    min-width: 250px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: white;
+  }
+
+  .settings-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    background: rgba(255, 235, 156, 0.3);
+  }
+
+  .settings-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .start-game-button {
+    margin-top: 2rem;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+    background: #FFD700;
+    border: 3px solid #FFD700;
+    color: #1a1a2e;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .start-game-button:hover {
+    background: #FFD700;
+    color: #1a1a2e;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .start-game-button:disabled {
+    background: #666;
+    border-color: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .players-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 26, 46, 0.95);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    z-index: 1000;
+    width: 80%;
+    max-width: 600px;
+    backdrop-filter: blur(10px);
+  }
+
+  .players-modal.active {
+    display: block;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+  }
+
+  .modal-overlay.active {
+    display: block;
+  }
+
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .player-button {
+    background: rgba(255, 235, 156, 0.2);
+    border: 2px solid #FFD700;
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+  }
+
+  .player-button:hover {
+    background: rgba(255, 235, 156, 0.3);
+    transform: scale(1.05);
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #FFD700;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    to {
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                   0 0 30px rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate3d(1, 1, 1, 0deg); }
+    50% { transform: rotate3d(1, 1, 1, 180deg); }
+    100% { transform: rotate3d(1, 1, 1, 360deg); }
+  }
+
+  .dice-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 26, 46, 0.95);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    z-index: 1000;
+    width: 300px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .dice-modal.active {
+    display: block;
+  }
+
+  .dice-container {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    perspective: 1000px;
+    margin: 0 auto 2rem;
+  }
+
+  .dice {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 2s ease-out;
+  }
+
+  .dice.spinning {
+    animation: spin 2s ease-in-out infinite;
+  }
+
+  .dice-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #FFD700;
+    border: 2px solid #1a1a2e;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: #1a1a2e;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+  }
+
+  .random-number {
+    font-size: 2rem;
+    color: #FFD700;
+    margin-top: 1rem;
+  }
+
+  .screen {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .screen.active {
+    display: block;
+    opacity: 1;
+  }
+
+  .icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+
+  .selected-players {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #FFD700;
+    display: none;
+  }
+
+  .selected-players.active {
+    display: block;
+  }
+
+  .selected-players-list {
+    margin-top: 1rem;
+    color: #FFD700;
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  .player-entry {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: rgba(255, 235, 156, 0.2);
+    border-radius: 5px;
+  }
+
+  .situations-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 26, 46, 0.95);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    z-index: 1000;
+    width: 90%;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+  }
+
+  .situations-modal.active {
+    display: block;
+  }
+
+  .situations-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .situation-button {
+    background: rgba(255, 235, 156, 0.2);
+    border: 2px solid #FFD700;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  .situation-button:hover {
+    background: rgba(255, 235, 156, 0.3);
+    transform: scale(1.02);
+  }
+
+  .selected-situation {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #FFD700;
+    display: none;
+  }
+
+  .selected-situation.active {
+    display: block;
+  }
+
+  .warning-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.9);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    z-index: 1001;
+    width: 300px;
+    text-align: center;
+    color: white;
+    backdrop-filter: blur(10px);
+  }
+
+  .warning-modal.active {
+    display: block;
+    animation: fadeInOut 5s forwards;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  #selected-dice-players {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #FFD700;
+    display: none;
+  }
+
+  #selected-dice-players.active {
+    display: block;
+  }
+
+  .selected-player-entry {
+    margin: 0.3rem 0;
+    padding: 0.3rem;
+    background: rgba(255, 235, 156, 0.2);
+    border-radius: 5px;
+  }
+
+  .game-container {
+    background: rgba(255, 235, 156, 0.1);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .situation-display {
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .role-card {
+    background: rgba(255, 235, 156, 0.2);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: left;
+    animation: scaleIn 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-100px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .game-screen.active h1 {
+    animation: slideIn 0.8s ease forwards;
+  }
+
+  .game-container {
+    animation: fadeIn 1s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .situation-display {
+    animation: slideIn 1s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .roles-container {
+    animation: fadeIn 1s ease 0.9s forwards;
+    opacity: 0;
+  }
+
+  #context-description {
+    color: #8ef6e4;
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  .return-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid #FFD700;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .return-button:hover {
+    background: rgba(255, 215, 0, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  }
+
+  .mode-title {
+    color: #FFD700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .change-mode-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    margin-top: 0.5rem;
+  }
+
+  .change-mode-button:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.05);
+  }
+
+  .game-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  #context-mode-screen {
+    text-align: center;
+  }
+
+  #context-mode-screen h1 {
+    animation: slideIn 0.8s ease forwards;
+  }
+
+  #context-mode-screen p {
+    animation: fadeIn 1s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  #context-mode-screen .button {
+    animation: fadeIn 1s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .context-game-screen {
+    text-align: left;
+    padding: 2rem;
+  }
+
+  .dialogue-box {
+    background: rgba(255, 235, 156, 0.1);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+    animation: fadeIn 1s ease;
+  }
+
+  .dialogue-line {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #8ef6e4;
+  }
+
+  .answer-section {
+    display: none;
+    animation: fadeIn 1s ease;
+  }
+
+  .answer-section.active {
+    display: block;
+  }
+
+  .context-title {
+    color: #FFD700;
+    margin-bottom: 1rem;
+    animation: slideIn 0.8s ease;
+  }
+
+  .roles-section {
+    margin-top: 2rem;
+  }
+
+  .role-entry {
+    margin: 0.5rem 0;
+    color: #8ef6e4;
+  }
+
+  .solve-button {
+    background: #4CAF50;
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+  }
+
+  .solve-button:hover {
+    background: #45a049;
+    transform: scale(1.05);
+  }
+
+  .hint-button {
+    background: #4169E1;
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+  }
+
+  .hint-button:hover {
+    background: #1E90FF;
+    transform: scale(1.05);
+  }
+
+  .hint-section {
+    display: none;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(65, 105, 225, 0.2);
+    border-radius: 5px;
+    color: #4169E1;
+  }
+
+  .hint-section.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .how-to-play-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid #FFD700;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .how-to-play-button:hover {
+    background: rgba(255, 215, 0, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  }
+
+  .how-to-play-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 26, 46, 0.95);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    padding: 2rem;
+    z-index: 1000;
+    width: 80%;
+    max-width: 600px;
+    backdrop-filter: blur(10px);
+    color: white;
+  }
+
+  .how-to-play-modal.active {
+    display: block;
+  }
+
+  .how-to-play-content {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #8ef6e4;
+  }
+
+</style>
+</head>
+<body>
+  <div class="pixelated-border"></div>
+  
+  <div class="container">
+    <div id="main-screen" class="screen active">
+      <h1>Roleplay Games</h1>
+      <p>Play while you learn!</p>
+      <button class="button" onclick="showSettings()">
+        <i class="fas fa-play icon"></i>
+        START
+      </button>
+    </div>
+
+    <div id="settings-screen" class="screen">
+      <button class="return-button" onclick="returnToMain()">
+        <i class="fas fa-arrow-left"></i>
+        Return
+      </button>
+      <button class="how-to-play-button" onclick="showHowToPlay()">
+        <i class="fas fa-question-circle"></i>
+        How to play?
+      </button>
+      <div class="mode-title">Roleplay mode</div>
+      <h1>Settings</h1>
+      <div class="settings-container">
+        <div class="settings-card" onclick="showPlayersModal()">
+          <i class="fas fa-users icon"></i>
+          <div class="card-title">Number of players</div>
+          <div id="selected-players-display" class="selected-players"></div>
+        </div>
+        <div class="settings-card" onclick="showSituationsModal()">
+          <i class="fas fa-theater-masks icon"></i>
+          <div class="card-title">Situation</div>
+          <div id="selected-situation-display" class="selected-situation"></div>
+        </div>
+        <div class="settings-card" onclick="showDiceModal()">
+          <i class="fas fa-dice icon"></i>
+          <div class="card-title">Choose players</div>
+          <div id="selected-dice-players" class="selected-players"></div>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button class="start-game-button" onclick="startGame()" id="start-game-button">
+          <i class="fas fa-gamepad"></i>
+          START GAME
+        </button>
+        <button class="change-mode-button" onclick="changeGameMode()">
+          <i class="fas fa-exchange-alt"></i>
+          CHANGE GAME MODE
+        </button>
+      </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+      <h1>Game Started!</h1>
+      <div class="game-container">
+        <div class="situation-display">
+          <h2>Situation: <span id="game-situation"></span></h2>
+          <p id="context-description"></p>
+        </div>
+        <div class="roles-container">
+          <h2>Player Roles</h2>
+          <div id="player-roles" class="roles-grid"></div>
+        </div>
+        <div class="button-container">
+          <button class="button" onclick="returnToSettings()">
+            <i class="fas fa-arrow-left"></i>
+            Back to Settings
+          </button>
+          <button class="button generate-new" onclick="generateNewSituation()">
+            <i class="fas fa-sync-alt"></i>
+            Generate New Situation
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="context-mode-screen" class="screen">
+      <button class="return-button" onclick="returnToMain()">
+        <i class="fas fa-arrow-left"></i>
+        Return
+      </button>
+      <button class="how-to-play-button" onclick="showHowToPlay()">
+        <i class="fas fa-question-circle"></i>
+        How to play?
+      </button>
+      <div class="mode-title">Context mode</div>
+      <h1>What's the context?</h1>
+      <p>Test your understanding!</p>
+      <button class="button" onclick="startContextMode()">
+        <i class="fas fa-play icon"></i>
+        START
+      </button>
+      <button class="change-mode-button" onclick="switchToRoleplayMode()">
+        <i class="fas fa-exchange-alt"></i>
+        CHANGE GAME MODE
+      </button>
+    </div>
+
+    <div id="context-game-screen" class="screen">
+      <button class="return-button" onclick="returnToContextMode()">
+        <i class="fas fa-arrow-left"></i>
+        Return
+      </button>
       
-      <div class="container">
-        <div id="main-screen" class="screen active">
-          <h1>Roleplay Games</h1>
-          <p>Play while you learn!</p>
-          <button class="button" onclick="showSettings()">
-            <i class="fas fa-play icon"></i>
-            START
-          </button>
-        </div>
-    
-        <div id="settings-screen" class="screen">
-          <button class="return-button" onclick="returnToMain()">
-            <i class="fas fa-arrow-left"></i>
-            Return
-          </button>
-          <div class="mode-title">Roleplay mode</div>
-          <h1>Settings</h1>
-          <div class="settings-container">
-            <div class="settings-card" onclick="showPlayersModal()">
-              <i class="fas fa-users icon"></i>
-              <div class="card-title">Number of players</div>
-              <div id="selected-players-display" class="selected-players"></div>
-            </div>
-            <div class="settings-card" onclick="showSituationsModal()">
-              <i class="fas fa-theater-masks icon"></i>
-              <div class="card-title">Situation</div>
-              <div id="selected-situation-display" class="selected-situation"></div>
-            </div>
-            <div class="settings-card" onclick="showDiceModal()">
-              <i class="fas fa-dice icon"></i>
-              <div class="card-title">Choose players</div>
-              <div id="selected-dice-players" class="selected-players"></div>
-            </div>
-          </div>
-          <div class="game-controls">
-            <button class="start-game-button" onclick="startGame()" id="start-game-button">
-              <i class="fas fa-gamepad"></i>
-              START GAME
-            </button>
-            <button class="change-mode-button" onclick="changeGameMode()">
-              <i class="fas fa-exchange-alt"></i>
-              CHANGE GAME MODE
-            </button>
-          </div>
-        </div>
-    
-        <div id="game-screen" class="screen">
-          <h1>Game Started!</h1>
-          <div class="game-container">
-            <div class="situation-display">
-              <h2>Situation: <span id="game-situation"></span></h2>
-              <p id="context-description"></p>
-            </div>
-            <div class="roles-container">
-              <h2>Player Roles</h2>
-              <div id="player-roles" class="roles-grid"></div>
-            </div>
-            <div class="button-container">
-              <button class="button" onclick="returnToSettings()">
-                <i class="fas fa-arrow-left"></i>
-                Back to Settings
-              </button>
-              <button class="button generate-new" onclick="generateNewSituation()">
-                <i class="fas fa-sync-alt"></i>
-                Generate New Situation
-              </button>
-            </div>
-          </div>
-        </div>
-    
-        <div id="context-mode-screen" class="screen">
-          <button class="return-button" onclick="returnToMain()">
-            <i class="fas fa-arrow-left"></i>
-            Return
-          </button>
-          <div class="mode-title">Context mode</div>
-          <h1>What's the context?</h1>
-          <p>Test your understanding!</p>
-          <button class="button" onclick="startContextMode()">
-            <i class="fas fa-play icon"></i>
-            START
-          </button>
-        </div>
-    
-        <div id="context-game-screen" class="screen">
-          <button class="return-button" onclick="returnToContextMode()">
-            <i class="fas fa-arrow-left"></i>
-            Return
-          </button>
-          
-          <div class="dialogue-box">
-            <div id="dialogue-content"></div>
-          </div>
-    
-          <div class="button-container">
-            <button class="hint-button" onclick="showHint()">
-              <i class="fas fa-lightbulb"></i>
-              Hint
-            </button>
-            <button class="solve-button" onclick="showAnswer()">
-              <i class="fas fa-check"></i>
-              Solve
-            </button>
-          </div>
-    
-          <div id="hint-section" class="hint-section"></div>
-    
-          <div id="answer-section" class="answer-section">
-            <h2 class="context-title" id="context-title"></h2>
-            <div class="roles-section" id="roles-section"></div>
-          </div>
-        </div>
+      <div class="dialogue-box">
+        <div id="dialogue-content"></div>
       </div>
-    
-      <div class="modal-overlay" id="modal-overlay"></div>
-      <div class="players-modal" id="players-modal">
-        <button class="close-modal" onclick="hidePlayersModal()">
-          <i class="fas fa-times"></i>
+
+      <div class="button-container">
+        <button class="hint-button" onclick="showHint()">
+          <i class="fas fa-lightbulb"></i>
+          Hint
         </button>
-        <h2>Select number of players</h2>
-        <div class="players-grid">
-          <button class="player-button" onclick="selectPlayers('1 Player')">1 Player</button>
-          <button class="player-button" onclick="selectPlayers('2 Players')">2 Players</button>
-          <button class="player-button" onclick="selectPlayers('3 Players')">3 Players</button>
-          <button class="player-button" onclick="selectPlayers('4 Players')">4 Players</button>
-        </div>
-      </div>
-    
-      <div class="situations-modal" id="situations-modal">
-        <button class="close-modal" onclick="hideSituationsModal()">
-          <i class="fas fa-times"></i>
+        <button class="solve-button" onclick="showAnswer()">
+          <i class="fas fa-check"></i>
+          Solve
         </button>
-        <h2>Select a situation</h2>
-        <div class="situations-grid">
-          <button class="situation-button" onclick="selectSituation('Daily situations')">Daily situations</button>
-          <button class="situation-button" onclick="selectSituation('Professional interactions')">Professional interactions</button>
-          <button class="situation-button" onclick="selectSituation('Educational situations')">Educational situations</button>
-          <button class="situation-button" onclick="selectSituation('Tourist contexts')">Tourist contexts</button>
-          <button class="situation-button" onclick="selectSituation('Emergency situations')">Emergency situations</button>
-          <button class="situation-button" onclick="selectSituation('Social environments')">Social environments</button>
-          <button class="situation-button" onclick="selectSituation('Imaginary or creative contexts')">Imaginary or creative contexts</button>
+      </div>
+
+      <div id="hint-section" class="hint-section"></div>
+
+      <div id="answer-section" class="answer-section">
+        <h2 class="context-title" id="context-title"></h2>
+        <div class="roles-section" id="roles-section"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay"></div>
+  <div class="players-modal" id="players-modal">
+    <button class="close-modal" onclick="hidePlayersModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2>Select number of players</h2>
+    <div class="players-grid">
+      <button class="player-button" onclick="selectPlayers('1 Player')">1 Player</button>
+      <button class="player-button" onclick="selectPlayers('2 Players')">2 Players</button>
+      <button class="player-button" onclick="selectPlayers('3 Players')">3 Players</button>
+      <button class="player-button" onclick="selectPlayers('4 Players')">4 Players</button>
+    </div>
+  </div>
+
+  <div class="situations-modal" id="situations-modal">
+    <button class="close-modal" onclick="hideSituationsModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2>Select a situation</h2>
+    <div class="situations-grid">
+      <button class="situation-button" onclick="selectSituation('Daily situations')">Daily situations</button>
+      <button class="situation-button" onclick="selectSituation('Professional interactions')">Professional interactions</button>
+      <button class="situation-button" onclick="selectSituation('Educational situations')">Educational situations</button>
+      <button class="situation-button" onclick="selectSituation('Tourist contexts')">Tourist contexts</button>
+      <button class="situation-button" onclick="selectSituation('Emergency situations')">Emergency situations</button>
+      <button class="situation-button" onclick="selectSituation('Social environments')">Social environments</button>
+      <button class="situation-button" onclick="selectSituation('Imaginary or creative contexts')">Imaginary or creative contexts</button>
+    </div>
+  </div>
+
+  <div class="dice-modal" id="dice-modal">
+    <button class="close-modal" onclick="hideDiceModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2>Choosing player...</h2>
+    <div class="dice-container">
+      <div class="dice" id="dice">
+        <div class="dice-face">
+          <i class="fas fa-dice-six"></i>
         </div>
       </div>
-    
-      <div class="dice-modal" id="dice-modal">
-        <button class="close-modal" onclick="hideDiceModal()">
-          <i class="fas fa-times"></i>
-        </button>
-        <h2>Choosing player...</h2>
-        <div class="dice-container">
-          <div class="dice" id="dice">
-            <div class="dice-face">
-              <i class="fas fa-dice-six"></i>
-            </div>
-          </div>
-        </div>
-        <div class="random-number" id="random-number"></div>
-        <div class="selected-players-list"></div>
-      </div>
-    
-      <div class="warning-modal" id="warning-modal">
-        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-        <h2 style="font-size: 1rem;">You have already selected all players!</h2>
-      </div>
-    
-      <script>
-        let selectedPlayerCount = '';
-        let remainingRolls = 0;
-        let selectedPlayers = [];
-        let selectedSituation = '';
-    
-        const situationTemplates = {
-          'Daily situations': [
-            {
-              context: "Shopping at a supermarket",
-              roles: ["Customer", "Cashier", "Store Manager", "Produce Assistant"]
-            },
-            {
-              context: "Ordering food at a restaurant",
-              roles: ["Customer", "Waiter/Waitress", "Chef", "Restaurant Manager"]
-            },
-            {
-              context: "Asking for directions on the street",
-              roles: ["Person needing directions", "Passerby", "Taxi Driver", "Traffic Police"]
-            },
-            {
-              context: "Buying tickets for cinema or public transport",
-              roles: ["Customer", "Ticket Seller", "Customer Service Assistant", "Person in line"]
-            },
-            {
-              context: "Discussing weekend plans with a friend",
-              roles: ["Friend", "Activity Organizer", "Guest", "Close Family Member"]
-            },
-            {
-              context: "Booking a hotel room",
-              roles: ["Customer", "Receptionist", "Hotel Manager", "Cleaning Staff"]
-            },
-            {
-              context: "Having a routine medical check-up",
-              roles: ["Patient", "Doctor", "Nurse", "Clinic Receptionist"]
-            },
-            {
-              context: "Getting help at a technology store",
-              roles: ["Customer", "Sales Person", "Product Advisor", "Store Manager"]
-            },
-            {
-              context: "Coordinating a meeting via chat or phone",
-              roles: ["Conversation Initiator", "Friend/Coworker", "Personal Assistant", "Event Coordinator"]
-            }
-          ],
-          'Professional interactions': [
-            {
-              context: "Job interview at a company",
-              roles: ["Job Candidate", "Interviewer", "HR Recruiter", "HR Observer"]
-            },
-            {
-              context: "Business meeting",
-              roles: ["Meeting Leader", "Participant", "Secretary", "Presenter"]
-            },
-            {
-              context: "Resolving technical issues with a client",
-              roles: ["Client", "Support Technician", "Customer Service Manager", "Technology Specialist"]
-            },
-            {
-              context: "Project presentation at the office",
-              roles: ["Presenter", "Team Member", "Department Head", "Evaluator"]
-            },
-            {
-              context: "Team project collaboration",
-              roles: ["Team Leader", "Team Member", "Project Coordinator", "Administrative Assistant"]
-            },
-            {
-              context: "Follow-up call with important client",
-              roles: ["Sales Representative", "Client", "Sales Supervisor", "Sales Assistant"]
-            },
-            {
-              context: "International video conference",
-              roles: ["Moderator", "Participant", "Translator", "Technical Assistant"]
-            },
-            {
-              context: "New employee training process",
-              roles: ["Trainer", "New Employee", "Assigned Mentor", "HR Coordinator"]
-            },
-            {
-              context: "Sales results presentation",
-              roles: ["Sales Manager", "Team Member", "Data Analyst", "Sales Supervisor"]
-            }
-          ],
-          'Educational situations': [
-            {
-              context: "Requesting information about a course",
-              roles: ["Student", "Course Advisor", "Teacher", "School Administrator"]
-            },
-            {
-              context: "Asking about assignments or class projects",
-              roles: ["Student", "Teacher", "Classmate", "Tutor"]
-            },
-            {
-              context: "Participating in a group discussion",
-              roles: ["Active Participant", "Discussion Moderator", "Teacher/Facilitator", "Observer"]
-            },
-            {
-              context: "Attending a private tutoring session",
-              roles: ["Student", "Tutor", "Parent", "Administrative Assistant"]
-            },
-            {
-              context: "Participating in a group study session",
-              roles: ["Group Leader", "Active Student", "Facilitator", "Observer"]
-            },
-            {
-              context: "Discussing an academic problem with a teacher",
-              roles: ["Student", "Teacher", "School Counselor", "Classmate"]
-            },
-            {
-              context: "Giving a class talk on a topic of interest",
-              roles: ["Student Presenter", "Teacher", "Classmate", "Guest Expert"]
-            },
-            {
-              context: "Participating in a speech or debate contest",
-              roles: ["Participant", "Moderator", "Judge", "Audience Member"]
-            },
-            {
-              context: "Asking questions during an online class",
-              roles: ["Student", "Teacher", "Classmate", "Moderator"]
-            },
-            {
-              context: "Submitting work or project at school",
-              roles: ["Student", "Teacher", "Classmate", "Administrative Assistant"]
-            },
-            {
-              context: "Reviewing grades with a teacher after feedback",
-              roles: ["Student", "Teacher", "Guidance Counselor", "Classmate"]
-            },
-            {
-              context: "Collaborating on a school research project",
-              roles: ["Project Leader", "Group Member", "Supervising Teacher", "External Advisor"]
-            }
-          ],
-          'Tourist contexts': [
-            {
-              context: "Booking a hotel room",
-              roles: ["Tourist (Customer)", "Hotel Receptionist", "Hotel Manager", "Travel Agent"]
-            },
-            {
-              context: "Interacting with a tour guide",
-              roles: ["Tourist", "Tour Guide", "Other Tourist", "Tour Supervisor"]
-            },
-            {
-              context: "Shopping for souvenirs",
-              roles: ["Tourist (Buyer)", "Shop Seller", "Store Manager", "Other Customer"]
-            },
-            {
-              context: "Asking about tourist attractions",
-              roles: ["Tourist", "Local Resident", "Tourist Office Employee", "Taxi Driver"]
-            },
-            {
-              context: "Taking a historic site tour",
-              roles: ["Tourist", "Historic Site Guide", "Group Tourist", "Museum Curator"]
-            },
-            {
-              context: "Attending a cultural activity (craft workshop)",
-              roles: ["Tourist Participant", "Activity Instructor", "Other Tourist Participant", "Event Organizer"]
-            },
-            {
-              context: "Asking about public/private transportation routes",
-              roles: ["Tourist", "Bus/Taxi Driver", "Transport Passenger", "Station Employee"]
-            },
-            {
-              context: "Discussing prices and services at a travel agency",
-              roles: ["Tourist (Customer)", "Travel Agent", "Agency Supervisor", "Other Customer"]
-            },
-            {
-              context: "Asking for restaurant recommendations",
-              roles: ["Tourist", "Restaurant Employee", "Other Tourist", "Local Resident"]
-            },
-            {
-              context: "Making a reservation for entertainment (live show/concert)",
-              roles: ["Tourist", "Box Office Receptionist", "Event Promoter", "Other Attendee"]
-            }
-          ],
-          'Emergency situations': [
-            {
-              context: "Requesting medical help in an emergency",
-              roles: ["Person needing medical help", "Paramedic", "Witness", "Emergency Doctor"]
-            },
-            {
-              context: "Reporting a theft or accident",
-              roles: ["Victim", "Police Officer/Security Agent", "Witness", "Emergency Call Operator"]
-            },
-            {
-              context: "Looking for a pharmacy or nearby hospital",
-              roles: ["Person needing medicine/medical attention", "Pharmacist/Pharmacy Employee", "Local Resident", "Police Officer"]
-            },
-            {
-              context: "Giving clear instructions in case of danger (fire or evacuation)",
-              roles: ["Safety Leader", "Person in danger", "Firefighter/Emergency Personnel", "Other Evacuee"]
-            },
-            {
-              context: "Speaking with insurance company customer service",
-              roles: ["Person reporting incident", "Customer Service Representative", "Insurance Supervisor", "Affected person's relative"]
-            },
-            {
-              context: "Reporting a traffic accident to the police",
-              roles: ["Driver involved in accident", "Traffic Police Officer", "Vehicle Passenger", "Witness"]
-            },
-            {
-              context: "Requesting assistance for lost documentation",
-              roles: ["Person who lost documents", "Immigration Officer/Consulate Official", "Police Officer", "Friend/Family Member"]
-            },
-            {
-              context: "Coordinating rescue of someone trapped in a dangerous place",
-              roles: ["Rescuer", "Trapped Person", "Coworker/Family Member", "Witness"]
-            },
-            {
-              context: "Seeking help for an injured animal on the street",
-              roles: ["Person who found the animal", "Veterinarian/Clinic Worker", "Police Officer", "Other Passerby"]
-            },
-            {
-              context: "Speaking with emergency operator for first aid instructions",
-              roles: ["Person needing first aid instructions", "Emergency Line Operator", "Friend/Family Member", "Doctor"]
-            }
-          ],
-          'Social environments': [
-            {
-              context: "Introducing yourself at a party or gathering",
-              roles: ["Guest introducing themselves", "Party Host", "Another Guest", "Event Organizer"]
-            },
-            {
-              context: "Casual conversation about hobbies and interests",
-              roles: ["Conversation Initiator", "Responding Friend", "New Acquaintance", "Observer"]
-            },
-            {
-              context: "Planning an outing with friends",
-              roles: ["Outing Coordinator", "Activity Suggester", "Indecisive Friend", "Logistics Coordinator"]
-            },
-            {
-              context: "Discussing movies, music or sports informally",
-              roles: ["Topic Proposer", "Interested Participant", "Newcomer to Topic", "Critical Opinion Giver"]
-            },
-            {
-              context: "Discussing recent events or news",
-              roles: ["News Sharer", "Detail Inquirer", "Different Perspective Holder", "Context Provider"]
-            },
-            {
-              context: "Conversing at a café or restaurant with friends",
-              roles: ["Order Placer", "Food Commentator", "Waiter/Waitress", "Story Teller"]
-            },
-            {
-              context: "Participating in a group activity",
-              roles: ["Activity Leader", "Active Participant", "Facilitator", "Activity Observer"]
-            },
-            {
-              context: "Discussing weekend or vacation plans",
-              roles: ["Plan Suggester", "Friend joining in", "Undecided Person", "Activity Organizer"]
-            },
-            {
-              context: "Conversing in a group video call or chat",
-              roles: ["Call Initiator", "Daily Update Sharer", "Question Asker", "Occasional Participant"]
-            },
-            {
-              context: "Discussing group study plans or academic projects",
-              roles: ["Project Idea Proposer", "Opinion Contributor", "Task Coordinator", "Creative Solution Provider"]
-            }
-          ],
-          'Imaginary or creative contexts': [
-            {
-              context: "Astronaut communicating with mission control",
-              roles: ["Astronaut", "Mission Control", "Ground Engineer", "Communication Observer"]
-            },
-            {
-              context: "Detective solving a mystery",
-              roles: ["Lead Detective", "Key Witness", "Suspect", "Investigation Assistant"]
-            },
-            {
-              context: "Characters in a story or fable",
-              roles: ["Main Character", "Narrator", "Antagonist", "Supporting Character"]
-            },
-            {
-              context: "Chef explaining an exclusive menu",
-              roles: ["Chef", "Gourmet Client", "Kitchen Assistant", "Food Critic"]
-            },
-            {
-              context: "TV show interview",
-              roles: ["Show Host", "Special Guest", "Show Producer", "Camera Operator"]
-            },
-            {
-              context: "Art gallery special event",
-              roles: ["Curator", "Artist", "Gallery Visitor", "Gallery Guide"]
-            },
-            {
-              context: "Explorer on a jungle/desert expedition",
-              roles: ["Explorer", "Local Guide", "Scientist", "Expedition Partner"]
-            },
-            {
-              context: "Innovative product design presentation",
-              roles: ["Product Designer", "Investor", "Test User", "Marketing Expert"]
-            },
-            {
-              context: "Theater/movie review",
-              roles: ["Critic", "Actor", "Director", "Audience Member"]
-            },
-            {
-              context: "Superhero rescue mission",
-              roles: ["Superhero", "Citizen in Need", "Villain", "Team Partner"]
-            }
-          ]
-        };
-    
-        function showSettings() {
-          document.getElementById('main-screen').classList.remove('active');
+    </div>
+    <div class="random-number" id="random-number"></div>
+    <div class="selected-players-list"></div>
+  </div>
+
+  <div class="warning-modal" id="warning-modal">
+    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+    <h2 style="font-size: 1rem;">You have already selected all players!</h2>
+  </div>
+
+  <div class="how-to-play-modal" id="how-to-play-modal">
+    <button class="close-modal" onclick="hideHowToPlay()">
+      <i class="fas fa-times"></i>
+    </button>
+    <h2>How to Play</h2>
+    <div class="how-to-play-content">
+      <p>1. Press the play button</p>
+      <p>2. Read the generated dialog</p>
+      <p>3. Guess what role each person in the dialogue has</p>
+      <p>4. If you need a hint you can press the "hint" button and it will give you the context of the roles</p>
+      <p>5. Press solve to find out the answer to the text</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedPlayerCount = '';
+    let remainingRolls = 0;
+    let selectedPlayers = [];
+    let selectedSituation = '';
+
+    const situationTemplates = {
+      'Daily situations': [
+        {
+          context: "Shopping at a supermarket",
+          roles: ["Customer", "Cashier", "Store Manager", "Produce Assistant"]
+        },
+        {
+          context: "Ordering food at a restaurant",
+          roles: ["Customer", "Waiter/Waitress", "Chef", "Restaurant Manager"]
+        },
+        {
+          context: "Asking for directions on the street",
+          roles: ["Person needing directions", "Passerby", "Taxi Driver", "Traffic Police"]
+        },
+        {
+          context: "Buying tickets for cinema or public transport",
+          roles: ["Customer", "Ticket Seller", "Customer Service Assistant", "Person in line"]
+        },
+        {
+          context: "Discussing weekend plans with a friend",
+          roles: ["Friend", "Activity Organizer", "Guest", "Close Family Member"]
+        },
+        {
+          context: "Booking a hotel room",
+          roles: ["Customer", "Receptionist", "Hotel Manager", "Cleaning Staff"]
+        },
+        {
+          context: "Having a routine medical check-up",
+          roles: ["Patient", "Doctor", "Nurse", "Clinic Receptionist"]
+        },
+        {
+          context: "Getting help at a technology store",
+          roles: ["Customer", "Sales Person", "Product Advisor", "Store Manager"]
+        },
+        {
+          context: "Coordinating a meeting via chat or phone",
+          roles: ["Conversation Initiator", "Friend/Coworker", "Personal Assistant", "Event Coordinator"]
+        }
+      ],
+      'Professional interactions': [
+        {
+          context: "Job interview at a company",
+          roles: ["Job Candidate", "Interviewer", "HR Recruiter", "HR Observer"]
+        },
+        {
+          context: "Business meeting",
+          roles: ["Meeting Leader", "Participant", "Secretary", "Presenter"]
+        },
+        {
+          context: "Resolving technical issues with a client",
+          roles: ["Client", "Support Technician", "Customer Service Manager", "Technology Specialist"]
+        },
+        {
+          context: "Project presentation at the office",
+          roles: ["Presenter", "Team Member", "Department Head", "Evaluator"]
+        },
+        {
+          context: "Team project collaboration",
+          roles: ["Team Leader", "Team Member", "Project Coordinator", "Administrative Assistant"]
+        },
+        {
+          context: "Follow-up call with important client",
+          roles: ["Sales Representative", "Client", "Sales Supervisor", "Sales Assistant"]
+        },
+        {
+          context: "International video conference",
+          roles: ["Moderator", "Participant", "Translator", "Technical Assistant"]
+        },
+        {
+          context: "New employee training process",
+          roles: ["Trainer", "New Employee", "Assigned Mentor", "HR Coordinator"]
+        },
+        {
+          context: "Sales results presentation",
+          roles: ["Sales Manager", "Team Member", "Data Analyst", "Sales Supervisor"]
+        }
+      ],
+      'Educational situations': [
+        {
+          context: "Requesting information about a course",
+          roles: ["Student", "Course Advisor", "Teacher", "School Administrator"]
+        },
+        {
+          context: "Asking about assignments or class projects",
+          roles: ["Student", "Teacher", "Classmate", "Tutor"]
+        },
+        {
+          context: "Participating in a group discussion",
+          roles: ["Active Participant", "Discussion Moderator", "Teacher/Facilitator", "Observer"]
+        },
+        {
+          context: "Attending a private tutoring session",
+          roles: ["Student", "Tutor", "Parent", "Administrative Assistant"]
+        },
+        {
+          context: "Participating in a group study session",
+          roles: ["Group Leader", "Active Student", "Facilitator", "Observer"]
+        },
+        {
+          context: "Discussing an academic problem with a teacher",
+          roles: ["Student", "Teacher", "School Counselor", "Classmate"]
+        },
+        {
+          context: "Giving a class talk on a topic of interest",
+          roles: ["Student Presenter", "Teacher", "Classmate", "Guest Expert"]
+        },
+        {
+          context: "Participating in a speech or debate contest",
+          roles: ["Participant", "Moderator", "Judge", "Audience Member"]
+        },
+        {
+          context: "Asking questions during an online class",
+          roles: ["Student", "Teacher", "Classmate", "Moderator"]
+        },
+        {
+          context: "Submitting work or project at school",
+          roles: ["Student", "Teacher", "Classmate", "Administrative Assistant"]
+        },
+        {
+          context: "Reviewing grades with a teacher after feedback",
+          roles: ["Student", "Teacher", "Guidance Counselor", "Classmate"]
+        },
+        {
+          context: "Collaborating on a school research project",
+          roles: ["Project Leader", "Group Member", "Supervising Teacher", "External Advisor"]
+        }
+      ],
+      'Tourist contexts': [
+        {
+          context: "Booking a hotel room",
+          roles: ["Tourist (Customer)", "Hotel Receptionist", "Hotel Manager", "Travel Agent"]
+        },
+        {
+          context: "Interacting with a tour guide",
+          roles: ["Tourist", "Tour Guide", "Other Tourist", "Tour Supervisor"]
+        },
+        {
+          context: "Shopping for souvenirs",
+          roles: ["Tourist (Buyer)", "Shop Seller", "Store Manager", "Other Customer"]
+        },
+        {
+          context: "Asking about tourist attractions",
+          roles: ["Tourist", "Local Resident", "Tourist Office Employee", "Taxi Driver"]
+        },
+        {
+          context: "Taking a historic site tour",
+          roles: ["Tourist", "Historic Site Guide", "Group Tourist", "Museum Curator"]
+        },
+        {
+          context: "Attending a cultural activity (craft workshop)",
+          roles: ["Tourist Participant", "Activity Instructor", "Other Tourist Participant", "Event Organizer"]
+        },
+        {
+          context: "Asking about public/private transportation routes",
+          roles: ["Tourist", "Bus/Taxi Driver", "Transport Passenger", "Station Employee"]
+        },
+        {
+          context: "Discussing prices and services at a travel agency",
+          roles: ["Tourist (Customer)", "Travel Agent", "Agency Supervisor", "Other Customer"]
+        },
+        {
+          context: "Asking for restaurant recommendations",
+          roles: ["Tourist", "Restaurant Employee", "Other Tourist", "Local Resident"]
+        },
+        {
+          context: "Making a reservation for entertainment (live show/concert)",
+          roles: ["Tourist", "Box Office Receptionist", "Event Promoter", "Other Attendee"]
+        }
+      ],
+      'Emergency situations': [
+        {
+          context: "Requesting medical help in an emergency",
+          roles: ["Person needing medical help", "Paramedic", "Witness", "Emergency Doctor"]
+        },
+        {
+          context: "Reporting a theft or accident",
+          roles: ["Victim", "Police Officer/Security Agent", "Witness", "Emergency Call Operator"]
+        },
+        {
+          context: "Looking for a pharmacy or nearby hospital",
+          roles: ["Person needing medicine/medical attention", "Pharmacist/Pharmacy Employee", "Local Resident", "Police Officer"]
+        },
+        {
+          context: "Giving clear instructions in case of danger (fire or evacuation)",
+          roles: ["Safety Leader", "Person in danger", "Firefighter/Emergency Personnel", "Other Evacuee"]
+        },
+        {
+          context: "Speaking with insurance company customer service",
+          roles: ["Person reporting incident", "Customer Service Representative", "Insurance Supervisor", "Affected person's relative"]
+        },
+        {
+          context: "Reporting a traffic accident to the police",
+          roles: ["Driver involved in accident", "Traffic Police Officer", "Vehicle Passenger", "Witness"]
+        },
+        {
+          context: "Requesting assistance for lost documentation",
+          roles: ["Person who lost documents", "Immigration Officer/Consulate Official", "Police Officer", "Friend/Family Member"]
+        },
+        {
+          context: "Coordinating rescue of someone trapped in a dangerous place",
+          roles: ["Rescuer", "Trapped Person", "Coworker/Family Member", "Witness"]
+        },
+        {
+          context: "Seeking help for an injured animal on the street",
+          roles: ["Person who found the animal", "Veterinarian/Clinic Worker", "Police Officer", "Other Passerby"]
+        },
+        {
+          context: "Speaking with emergency operator for first aid instructions",
+          roles: ["Person needing first aid instructions", "Emergency Line Operator", "Friend/Family Member", "Doctor"]
+        }
+      ],
+      'Social environments': [
+        {
+          context: "Introducing yourself at a party or gathering",
+          roles: ["Guest introducing themselves", "Party Host", "Another Guest", "Event Organizer"]
+        },
+        {
+          context: "Casual conversation about hobbies and interests",
+          roles: ["Conversation Initiator", "Responding Friend", "New Acquaintance", "Observer"]
+        },
+        {
+          context: "Planning an outing with friends",
+          roles: ["Outing Coordinator", "Activity Suggester", "Indecisive Friend", "Logistics Coordinator"]
+        },
+        {
+          context: "Discussing movies, music or sports informally",
+          roles: ["Topic Proposer", "Interested Participant", "Newcomer to Topic", "Critical Opinion Giver"]
+        },
+        {
+          context: "Discussing recent events or news",
+          roles: ["News Sharer", "Detail Inquirer", "Different Perspective Holder", "Context Provider"]
+        },
+        {
+          context: "Conversing at a café or restaurant with friends",
+          roles: ["Order Placer", "Food Commentator", "Waiter/Waitress", "Story Teller"]
+        },
+        {
+          context: "Participating in a group activity",
+          roles: ["Activity Leader", "Active Participant", "Facilitator", "Activity Observer"]
+        },
+        {
+          context: "Discussing weekend or vacation plans",
+          roles: ["Plan Suggester", "Friend joining in", "Undecided Person", "Activity Organizer"]
+        },
+        {
+          context: "Conversing in a group video call or chat",
+          roles: ["Call Initiator", "Daily Update Sharer", "Question Asker", "Occasional Participant"]
+        },
+        {
+          context: "Discussing group study plans or academic projects",
+          roles: ["Project Idea Proposer", "Opinion Contributor", "Task Coordinator", "Creative Solution Provider"]
+        }
+      ],
+      'Imaginary or creative contexts': [
+        {
+          context: "Astronaut communicating with mission control",
+          roles: ["Astronaut", "Mission Control", "Ground Engineer", "Communication Observer"]
+        },
+        {
+          context: "Detective solving a mystery",
+          roles: ["Lead Detective", "Key Witness", "Suspect", "Investigation Assistant"]
+        },
+        {
+          context: "Characters in a story or fable",
+          roles: ["Main Character", "Narrator", "Antagonist", "Supporting Character"]
+        },
+        {
+          context: "Chef explaining an exclusive menu",
+          roles: ["Chef", "Gourmet Client", "Kitchen Assistant", "Food Critic"]
+        },
+        {
+          context: "TV show interview",
+          roles: ["Show Host", "Special Guest", "Show Producer", "Camera Operator"]
+        },
+        {
+          context: "Art gallery special event",
+          roles: ["Curator", "Artist", "Gallery Visitor", "Gallery Guide"]
+        },
+        {
+          context: "Explorer on a jungle/desert expedition",
+          roles: ["Explorer", "Local Guide", "Scientist", "Expedition Partner"]
+        },
+        {
+          context: "Innovative product design presentation",
+          roles: ["Product Designer", "Investor", "Test User", "Marketing Expert"]
+        },
+        {
+          context: "Theater/movie review",
+          roles: ["Critic", "Actor", "Director", "Audience Member"]
+        },
+        {
+          context: "Superhero rescue mission",
+          roles: ["Superhero", "Citizen in Need", "Villain", "Team Partner"]
+        }
+      ]
+    };
+
+    function showSettings() {
+      document.getElementById('main-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('settings-screen').classList.add('active');
+      }, 300);
+    }
+
+    function returnToMain() {
+      document.getElementById('settings-screen').classList.remove('active');
+      document.getElementById('context-mode-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('main-screen').classList.add('active');
+      }, 300);
+      
+      selectedPlayerCount = '';
+      remainingRolls = 0;
+      selectedPlayers = [];
+      selectedSituation = '';
+      
+      document.getElementById('selected-players-display').textContent = '';
+      document.getElementById('selected-players-display').classList.remove('active');
+      document.getElementById('selected-situation-display').textContent = '';
+      document.getElementById('selected-situation-display').classList.remove('active');
+      document.getElementById('selected-dice-players').innerHTML = '';
+      document.getElementById('selected-dice-players').classList.remove('active');
+    }
+
+    function showPlayersModal() {
+      document.getElementById('modal-overlay').classList.add('active');
+      document.getElementById('players-modal').classList.add('active');
+    }
+
+    function hidePlayersModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.getElementById('players-modal').classList.remove('active');
+    }
+
+    function selectPlayers(playerCount) {
+      selectedPlayerCount = playerCount;
+      remainingRolls = parseInt(playerCount.split(' ')[0]);
+      selectedPlayers = [];
+      
+      const displayElement = document.getElementById('selected-players-display');
+      displayElement.textContent = playerCount;
+      displayElement.classList.add('active');
+      
+      const dicePlayersDisplay = document.getElementById('selected-dice-players');
+      dicePlayersDisplay.innerHTML = '';
+      dicePlayersDisplay.classList.remove('active');
+      
+      hidePlayersModal();
+    }
+
+    function showSituationsModal() {
+      document.getElementById('modal-overlay').classList.add('active');
+      document.getElementById('situations-modal').classList.add('active');
+    }
+
+    function hideSituationsModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.getElementById('situations-modal').classList.remove('active');
+    }
+
+    function selectSituation(situation) {
+      selectedSituation = situation;
+      const displayElement = document.getElementById('selected-situation-display');
+      displayElement.textContent = situation;
+      displayElement.classList.add('active');
+      hideSituationsModal();
+    }
+
+    function showDiceModal() {
+      if (!selectedPlayerCount) {
+        alert('Please select the number of players first');
+        return;
+      }
+
+      if (remainingRolls <= 0) {
+        const warningModal = document.getElementById('warning-modal');
+        warningModal.classList.add('active');
+        setTimeout(() => {
+          warningModal.classList.remove('active');
+        }, 5000);
+        return;
+      }
+
+      document.getElementById('modal-overlay').classList.add('active');
+      document.getElementById('dice-modal').classList.add('active');
+      rollDice();
+    }
+
+    function hideDiceModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.getElementById('dice-modal').classList.remove('active');
+      document.getElementById('dice').classList.remove('spinning');
+      
+      const playersList = document.querySelector('.selected-players-list');
+      if (playersList) {
+        playersList.remove();
+      }
+    }
+
+    function rollDice() {
+      const dice = document.getElementById('dice');
+      const numberDisplay = document.getElementById('random-number');
+      const modalElement = document.getElementById('dice-modal');
+      const dicePlayersDisplay = document.getElementById('selected-dice-players');
+      
+      let playersList = modalElement.querySelector('.selected-players-list');
+      if (!playersList) {
+        playersList = document.createElement('div');
+        playersList.className = 'selected-players-list';
+        modalElement.appendChild(playersList);
+      }
+      
+      numberDisplay.textContent = '';
+      dice.classList.add('spinning');
+      
+      setTimeout(() => {
+        let randomNumber;
+        do {
+          randomNumber = Math.floor(Math.random() * 50) + 1;
+        } while (selectedPlayers.includes(randomNumber));
+        
+        selectedPlayers.push(randomNumber);
+        remainingRolls--;
+        
+        dice.classList.remove('spinning');
+        numberDisplay.textContent = `Player ${selectedPlayers.length}: ${randomNumber}`;
+        
+        playersList.innerHTML = selectedPlayers.map((num, index) => 
+          `<div class="player-entry">Player ${index + 1}: ${num}</div>`
+        ).join('');
+        
+        dicePlayersDisplay.innerHTML = selectedPlayers.map((num, index) => 
+          `<div class="selected-player-entry">Player ${index + 1}: ${num}</div>`
+        ).join('');
+        dicePlayersDisplay.classList.add('active');
+        
+        if (remainingRolls === 0) {
           setTimeout(() => {
-            document.getElementById('settings-screen').classList.add('active');
-          }, 300);
-        }
-    
-        function returnToMain() {
-          document.getElementById('settings-screen').classList.remove('active');
-          document.getElementById('context-mode-screen').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('main-screen').classList.add('active');
-          }, 300);
-          
-          selectedPlayerCount = '';
-          remainingRolls = 0;
-          selectedPlayers = [];
-          selectedSituation = '';
-          
-          document.getElementById('selected-players-display').textContent = '';
-          document.getElementById('selected-players-display').classList.remove('active');
-          document.getElementById('selected-situation-display').textContent = '';
-          document.getElementById('selected-situation-display').classList.remove('active');
-          document.getElementById('selected-dice-players').innerHTML = '';
-          document.getElementById('selected-dice-players').classList.remove('active');
-        }
-    
-        function showPlayersModal() {
-          document.getElementById('modal-overlay').classList.add('active');
-          document.getElementById('players-modal').classList.add('active');
-        }
-    
-        function hidePlayersModal() {
-          document.getElementById('modal-overlay').classList.remove('active');
-          document.getElementById('players-modal').classList.remove('active');
-        }
-    
-        function selectPlayers(playerCount) {
-          selectedPlayerCount = playerCount;
-          remainingRolls = parseInt(playerCount.split(' ')[0]);
-          selectedPlayers = [];
-          
-          const displayElement = document.getElementById('selected-players-display');
-          displayElement.textContent = playerCount;
-          displayElement.classList.add('active');
-          
-          const dicePlayersDisplay = document.getElementById('selected-dice-players');
-          dicePlayersDisplay.innerHTML = '';
-          dicePlayersDisplay.classList.remove('active');
-          
-          hidePlayersModal();
-        }
-    
-        function showSituationsModal() {
-          document.getElementById('modal-overlay').classList.add('active');
-          document.getElementById('situations-modal').classList.add('active');
-        }
-    
-        function hideSituationsModal() {
-          document.getElementById('modal-overlay').classList.remove('active');
-          document.getElementById('situations-modal').classList.remove('active');
-        }
-    
-        function selectSituation(situation) {
-          selectedSituation = situation;
-          const displayElement = document.getElementById('selected-situation-display');
-          displayElement.textContent = situation;
-          displayElement.classList.add('active');
-          hideSituationsModal();
-        }
-    
-        function showDiceModal() {
-          if (!selectedPlayerCount) {
-            alert('Please select the number of players first');
-            return;
-          }
-    
-          if (remainingRolls <= 0) {
-            const warningModal = document.getElementById('warning-modal');
-            warningModal.classList.add('active');
-            setTimeout(() => {
-              warningModal.classList.remove('active');
-            }, 5000);
-            return;
-          }
-    
-          document.getElementById('modal-overlay').classList.add('active');
-          document.getElementById('dice-modal').classList.add('active');
-          rollDice();
-        }
-    
-        function hideDiceModal() {
-          document.getElementById('modal-overlay').classList.remove('active');
-          document.getElementById('dice-modal').classList.remove('active');
-          document.getElementById('dice').classList.remove('spinning');
-          
-          const playersList = document.querySelector('.selected-players-list');
-          if (playersList) {
-            playersList.remove();
-          }
-        }
-    
-        function rollDice() {
-          const dice = document.getElementById('dice');
-          const numberDisplay = document.getElementById('random-number');
-          const modalElement = document.getElementById('dice-modal');
-          const dicePlayersDisplay = document.getElementById('selected-dice-players');
-          
-          let playersList = modalElement.querySelector('.selected-players-list');
-          if (!playersList) {
-            playersList = document.createElement('div');
-            playersList.className = 'selected-players-list';
-            modalElement.appendChild(playersList);
-          }
-          
-          numberDisplay.textContent = '';
-          dice.classList.add('spinning');
-          
-          setTimeout(() => {
-            let randomNumber;
-            do {
-              randomNumber = Math.floor(Math.random() * 50) + 1;
-            } while (selectedPlayers.includes(randomNumber));
-            
-            selectedPlayers.push(randomNumber);
-            remainingRolls--;
-            
-            dice.classList.remove('spinning');
-            numberDisplay.textContent = `Player ${selectedPlayers.length}: ${randomNumber}`;
-            
-            playersList.innerHTML = selectedPlayers.map((num, index) => 
-              `<div class="player-entry">Player ${index + 1}: ${num}</div>`
-            ).join('');
-            
-            dicePlayersDisplay.innerHTML = selectedPlayers.map((num, index) => 
-              `<div class="selected-player-entry">Player ${index + 1}: ${num}</div>`
-            ).join('');
-            dicePlayersDisplay.classList.add('active');
-            
-            if (remainingRolls === 0) {
-              setTimeout(() => {
-                hideDiceModal();
-              }, 1500);
-            }
-          }, 2000);
-        }
-    
-        function startGame() {
-          if (!selectedPlayerCount) {
-            alert('Please select the number of players first');
-            return;
-          }
-          if (!selectedSituation) {
-            alert('Please select a situation first');
-            return;
-          }
-          if (remainingRolls > 0) {
-            alert('Please select all players before starting the game');
-            return;
-          }
-    
-          document.getElementById('settings-screen').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('game-screen').classList.add('active');
-            
-            const situations = situationTemplates[selectedSituation];
-            const randomSituation = situations[Math.floor(Math.random() * situations.length)];
-    
-            document.getElementById('game-situation').textContent = selectedSituation;
-            document.getElementById('context-description').textContent = randomSituation.context;
-    
-            const rolesContainer = document.getElementById('player-roles');
-            rolesContainer.innerHTML = '';
-            
-            selectedPlayers.forEach((playerId, index) => {
-              const roleCard = document.createElement('div');
-              roleCard.className = 'role-card';
-              roleCard.style.animationDelay = `${1.2 + (index * 0.2)}s`;
-              roleCard.innerHTML = `
-                <h3>Player ${playerId}</h3>
-                <p>Role: ${randomSituation.roles[index] || 'Observer'}</p>
-              `;
-              rolesContainer.appendChild(roleCard);
-            });
-          }, 300);
-        }
-    
-        function returnToSettings() {
-          document.getElementById('game-screen').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('settings-screen').classList.add('active');
-          }, 300);
-        }
-    
-        function generateNewSituation() {
-          const situations = situationTemplates[selectedSituation];
-          const randomSituation = situations[Math.floor(Math.random() * situations.length)];
-    
-          document.getElementById('context-description').style.opacity = '0';
-          document.getElementById('player-roles').style.opacity = '0';
-    
-          setTimeout(() => {
-            document.getElementById('context-description').textContent = randomSituation.context;
-    
-            const rolesContainer = document.getElementById('player-roles');
-            rolesContainer.innerHTML = '';
-            
-            selectedPlayers.forEach((playerId, index) => {
-              const roleCard = document.createElement('div');
-              roleCard.className = 'role-card';
-              roleCard.style.animationDelay = `${0.2 + (index * 0.2)}s`; 
-              roleCard.innerHTML = `
-                <h3>Player ${playerId}</h3>
-                <p>Role: ${randomSituation.roles[index] || 'Observer'}</p>
-              `;
-              rolesContainer.appendChild(roleCard);
-            });
-    
-            document.getElementById('context-description').style.opacity = '1';
-            document.getElementById('player-roles').style.opacity = '1';
-          }, 500);
-        }
-    
-        function changeGameMode() {
-          document.getElementById('settings-screen').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('context-mode-screen').classList.add('active');
-          }, 300);
-        }
-    
-        function startContextMode() {
-          document.getElementById('context-mode-screen').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('context-game-screen').classList.add('active');
-            displayRandomContext();
-          }, 300);
-        }
-    
-        function returnToContextMode() {
-          document.getElementById('context-game-screen').classList.remove('active');
-          document.getElementById('answer-section').classList.remove('active');
-          setTimeout(() => {
-            document.getElementById('main-screen').classList.add('active');
-          }, 300);
-        }
-    
-        function displayRandomContext() {
-          const randomExample = contextExamples[Math.floor(Math.random() * contextExamples.length)];
-          const dialogueContent = document.getElementById('dialogue-content');
-          
-          // Store the current example title for hint
-          dialogueContent.dataset.title = randomExample.title;
-          
-          dialogueContent.innerHTML = randomExample.dialogue
-            .map(line => `<div class="dialogue-line">${line}</div>`)
-            .join('');
-            
-          document.getElementById('context-title').textContent = randomExample.title;
-          document.getElementById('roles-section').innerHTML = randomExample.roles
-            .map(role => `<div class="role-entry">${role}</div>`)
-            .join('');
-            
-          // Reset hint section when loading new context
-          const hintSection = document.getElementById('hint-section');
-          hintSection.classList.remove('active');
-          hintSection.textContent = '';
-        }
-    
-        function showHint() {
-          const dialogueContent = document.getElementById('dialogue-content');
-          const hintSection = document.getElementById('hint-section');
-          const title = dialogueContent.dataset.title;
-          
-          hintSection.textContent = `Hint: ${title}`;
-          hintSection.classList.add('active');
-        }
-    
-        function showAnswer() {
-          document.getElementById('answer-section').classList.add('active');
-        }
-    
-        document.querySelectorAll('.settings-card').forEach(card => {
-          card.addEventListener('mouseover', () => {
-            // Here you could add a sound effect if desired
-          });
-        });
-    
-        document.getElementById('modal-overlay').addEventListener('click', (e) => {
-          if (e.target === document.getElementById('modal-overlay')) {
-            hidePlayersModal();
-            hideSituationsModal();
             hideDiceModal();
-          }
+          }, 1500);
+        }
+      }, 2000);
+    }
+
+    function startGame() {
+      if (!selectedPlayerCount) {
+        alert('Please select the number of players first');
+        return;
+      }
+      if (!selectedSituation) {
+        alert('Please select a situation first');
+        return;
+      }
+      if (remainingRolls > 0) {
+        alert('Please select all players before starting the game');
+        return;
+      }
+
+      document.getElementById('settings-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('game-screen').classList.add('active');
+        
+        const situations = situationTemplates[selectedSituation];
+        const randomSituation = situations[Math.floor(Math.random() * situations.length)];
+
+        document.getElementById('game-situation').textContent = selectedSituation;
+        document.getElementById('context-description').textContent = randomSituation.context;
+
+        const rolesContainer = document.getElementById('player-roles');
+        rolesContainer.innerHTML = '';
+        
+        selectedPlayers.forEach((playerId, index) => {
+          const roleCard = document.createElement('div');
+          roleCard.className = 'role-card';
+          roleCard.style.animationDelay = `${1.2 + (index * 0.2)}s`;
+          roleCard.innerHTML = `
+            <h3>Player ${playerId}</h3>
+            <p>Role: ${randomSituation.roles[index] || 'Observer'}</p>
+          `;
+          rolesContainer.appendChild(roleCard);
         });
-    
-        document.querySelectorAll('.settings-card')[2].onclick = showDiceModal;
-    
-        const contextExamples = [
-          {
-            title: "Shopping at a supermarket",
-            dialogue: [
-              "Person 1: Excuse me, where can I find the fresh vegetables?",
-              "Person 2: They are in aisle 3, right next to the fruits.",
-              "Person 1: Thank you! How much is the lettuce?",
-              "Person 2: It's $2.50 per head.",
-              "Person 1: Great, I'll take two, please."
-            ],
-            roles: [
-              "Person 1: Customer",
-              "Person 2: Cashier"
-            ]
-          },
-          // Add all other examples following the same structure
-        ];
-      </script>
-    </body></html>
+      }, 300);
+    }
+
+    function returnToSettings() {
+      document.getElementById('game-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('settings-screen').classList.add('active');
+      }, 300);
+    }
+
+    function generateNewSituation() {
+      const situations = situationTemplates[selectedSituation];
+      const randomSituation = situations[Math.floor(Math.random() * situations.length)];
+
+      document.getElementById('context-description').style.opacity = '0';
+      document.getElementById('player-roles').style.opacity = '0';
+
+      setTimeout(() => {
+        document.getElementById('context-description').textContent = randomSituation.context;
+
+        const rolesContainer = document.getElementById('player-roles');
+        rolesContainer.innerHTML = '';
+        
+        selectedPlayers.forEach((playerId, index) => {
+          const roleCard = document.createElement('div');
+          roleCard.className = 'role-card';
+          roleCard.style.animationDelay = `${0.2 + (index * 0.2)}s`; 
+          roleCard.innerHTML = `
+            <h3>Player ${playerId}</h3>
+            <p>Role: ${randomSituation.roles[index] || 'Observer'}</p>
+          `;
+          rolesContainer.appendChild(roleCard);
+        });
+
+        document.getElementById('context-description').style.opacity = '1';
+        document.getElementById('player-roles').style.opacity = '1';
+      }, 500);
+    }
+
+    function changeGameMode() {
+      document.getElementById('settings-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('context-mode-screen').classList.add('active');
+      }, 300);
+    }
+
+    function switchToRoleplayMode() {
+      document.getElementById('context-mode-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('settings-screen').classList.add('active');
+      }, 300);
+    }
+
+    function startContextMode() {
+      document.getElementById('context-mode-screen').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('context-game-screen').classList.add('active');
+        displayRandomContext();
+      }, 300);
+    }
+
+    function returnToContextMode() {
+      document.getElementById('context-game-screen').classList.remove('active');
+      document.getElementById('answer-section').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('main-screen').classList.add('active');
+      }, 300);
+    }
+
+    function displayRandomContext() {
+      const randomExample = contextExamples[Math.floor(Math.random() * contextExamples.length)];
+      const dialogueContent = document.getElementById('dialogue-content');
+      
+      // Store the current example title for hint
+      dialogueContent.dataset.title = randomExample.title;
+      
+      dialogueContent.innerHTML = randomExample.dialogue
+        .map(line => `<div class="dialogue-line">${line}</div>`)
+        .join('');
+        
+      document.getElementById('context-title').textContent = randomExample.title;
+      document.getElementById('roles-section').innerHTML = randomExample.roles
+        .map(role => `<div class="role-entry">${role}</div>`)
+        .join('');
+        
+      // Reset hint section when loading new context
+      const hintSection = document.getElementById('hint-section');
+      hintSection.classList.remove('active');
+      hintSection.textContent = '';
+    }
+
+    function showHint() {
+      const dialogueContent = document.getElementById('dialogue-content');
+      const hintSection = document.getElementById('hint-section');
+      const title = dialogueContent.dataset.title;
+      
+      hintSection.textContent = `Hint: ${title}`;
+      hintSection.classList.add('active');
+    }
+
+    function showAnswer() {
+      document.getElementById('answer-section').classList.add('active');
+    }
+
+    document.querySelectorAll('.settings-card').forEach(card => {
+      card.addEventListener('mouseover', () => {
+        // Here you could add a sound effect if desired
+      });
+    });
+
+    document.getElementById('modal-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modal-overlay')) {
+        hidePlayersModal();
+        hideSituationsModal();
+        hideDiceModal();
+        hideHowToPlay();
+      }
+    });
+
+    document.querySelectorAll('.settings-card')[2].onclick = showDiceModal;
+
+    const contextExamples = [
+      {
+        title: "Shopping at a supermarket",
+        dialogue: [
+          "Person 1: Excuse me, where can I find the fresh vegetables?",
+          "Person 2: They are in aisle 3, right next to the fruits.",
+          "Person 1: Thank you! How much is the lettuce?",
+          "Person 2: It's $2.50 per head.",
+          "Person 1: Great, I'll take two, please."
+        ],
+        roles: [
+          "Person 1: Customer",
+          "Person 2: Cashier"
+        ]
+      },
+      // Add all other examples following the same structure
+    ];
+
+    function showHowToPlay() {
+      const currentScreen = document.querySelector('.screen.active').id;
+      const howToPlayContent = document.querySelector('.how-to-play-content');
+      
+      if (currentScreen === 'settings-screen') {
+        // Roleplay mode instructions
+        howToPlayContent.innerHTML = `
+          <p>1. Select number of players</p>
+          <p>2. Select the situation you want to play</p> 
+          <p>3. Generate the numbers of the players</p>
+          <p>4. Press "start game"</p>
+          <p>5. Each player acts as the role assigned to him</p>
+        `;
+      } else {
+        // Context mode instructions 
+        howToPlayContent.innerHTML = `
+          <p>1. Press the play button</p>
+          <p>2. Read the generated dialog</p>
+          <p>3. Guess what role each person in the dialogue has</p>
+          <p>4. If you need a hint you can press the "hint" button and it will give you the context of the roles</p>
+          <p>5. Press solve to find out the answer to the text</p>
+        `;
+      }
+
+      document.getElementById('modal-overlay').classList.add('active');
+      document.getElementById('how-to-play-modal').classList.add('active');
+    }
+
+    function hideHowToPlay() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.getElementById('how-to-play-modal').classList.remove('active');
+    }
+
+  </script>
+</body></html>
